@@ -1,0 +1,32 @@
+# Test against the latest version of this Node.js version
+environment:
+  matrix:
+    - nodejs_version: "10"
+    - nodejs_version: "12"
+
+cache:
+  - node_modules
+
+# Install scripts. (runs after repo cloning)
+install:
+  # Get the latest stable version of Node.js
+  # https://www.appveyor.com/docs/lang/nodejs-iojs/#installing-any-version-of-nodejs-or-iojs
+  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) $env:PLATFORM
+
+  # install modules
+  - npm install
+
+# Post-install test scripts.
+test_script:
+  # Output useful info for debugging.
+  - node --version
+  - npm --version
+  # run tests
+  - npm run test
+  - npm run build
+
+# Don't actually build.
+build: off
+
+# Do not build feature branch with open Pull Requests
+skip_branch_with_pr: true
